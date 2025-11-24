@@ -9,7 +9,7 @@ export default function Home() {
 
     setTimeout(() => {
       setExplosions((prev) => prev.filter((e) => e !== id));
-    }, 1500);
+    }, 2000);
   }
 
   return (
@@ -34,9 +34,9 @@ export default function Home() {
   );
 }
 
-/* COMPONENTE: corações subindo */
+/* Corações flutuando de leve no fundo */
 function FloatingHearts() {
-  const hearts = Array.from({ length: 20 });
+  const hearts = Array.from({ length: 25 });
 
   return (
     <div style={styles.heartsContainer}>
@@ -56,26 +56,38 @@ function FloatingHearts() {
   );
 }
 
-/* COMPONENTE: explosão de corações ao clicar no botão */
+/* CHUVA DE CORAÇÕES AO CLICAR */
 function Explosion() {
-  const burst = Array.from({ length: 30 });
+  const burst = Array.from({ length: 150 }); // ← AQUI: mais corações
 
   return (
     <div style={styles.explosion}>
-      {burst.map((_, i) => (
-        <span
-          key={i}
-          className="burst-heart"
-          style={{ transform: `rotate(${i * 12}deg)` }}
-        >
-          💖
-        </span>
-      ))}
+      {burst.map((_, i) => {
+        const angle = Math.random() * 360;
+        const distance = Math.random() * 300 + 80;
+        const size = Math.random() * 22 + 18;
+        const emoji = Math.random() > 0.5 ? "💖" : "❤️";
+
+        return (
+          <span
+            key={i}
+            className="burst-heart"
+            style={{
+              transform: `translate(-50%, -50%)`,
+              fontSize: `${size}px`,
+              animationDelay: `${Math.random() * 0.2}s`,
+              "--x": `${Math.cos(angle) * distance}px`,
+              "--y": `${Math.sin(angle) * distance}px`,
+            }}
+          >
+            {emoji}
+          </span>
+        );
+      })}
     </div>
   );
 }
 
-/* CSS de animações */
 const css = `
 @keyframes float {
   0% { transform: translateY(0) scale(1); opacity: 1; }
@@ -90,17 +102,8 @@ const css = `
 }
 
 @keyframes burst {
-  0% { transform: scale(0.2); opacity: 1; }
-  70% { transform: scale(1.2); opacity: 1; }
-  100% { opacity: 0; transform: scale(1.5); }
-}
-
-.burst-heart {
-  position: absolute;
-  left: 0;
-  top: 0;
-  font-size: 22px;
-  animation: burst 1.2s ease-out forwards;
+  0% { transform: translate(-50%, -50%) scale(0.2); opacity: 1; }
+  100% { transform: translate(var(--x), var(--y)) scale(1.3); opacity: 0; }
 }
 `;
 
@@ -136,7 +139,7 @@ const styles = {
   button: {
     marginTop: "25px",
     padding: "14px 26px",
-    background: "#ffffffaa",
+    background: "#ffffffbb",
     border: "none",
     borderRadius: "14px",
     cursor: "pointer",
@@ -163,8 +166,8 @@ const styles = {
     position: "absolute",
     left: "50%",
     top: "50%",
-    width: "0px",
-    height: "0px",
+    width: 0,
+    height: 0,
     pointerEvents: "none",
   },
 };
